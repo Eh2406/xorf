@@ -45,7 +45,7 @@ impl H012 {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! fuse_contains_impl(
-    ($key:expr, $self:expr, fingerprint $fpty:ty) => {
+    ($key:expr, $self:expr, $fingerprint:ident $fpty:ty) => {
         {
             use $crate::prelude::HashSet;
 
@@ -53,7 +53,7 @@ macro_rules! fuse_contains_impl(
                 hash,
                 hset: [h0, h1, h2],
             } = HashSet::fuse_from($key, $self.segment_length, $self.seed);
-            let fp = $crate::fingerprint!(hash) as $fpty;
+            let fp = $fingerprint(hash) as $fpty;
 
             fp == $self.fingerprints[h0]
                 ^ $self.fingerprints[h1]
@@ -66,10 +66,9 @@ macro_rules! fuse_contains_impl(
 #[doc(hidden)]
 #[macro_export]
 macro_rules! fuse_from_impl(
-    ($keys:ident fingerprint $fpty:ty, max iter $max_iter:expr) => {
+    ($keys:ident $fingerprint:ident $fpty:ty, max iter $max_iter:expr) => {
         {
             use $crate::{
-                fingerprint,
                 make_block,
                 make_fp_block,
                 prelude::{
@@ -161,7 +160,7 @@ macro_rules! fuse_from_impl(
             let mut B: Box<[$fpty]> = make_fp_block!(capacity);
             for ki in stack.iter().rev() {
                 let H012 { hset: [h0, h1, h2] } = H012::from(ki.hash, segment_length);
-                let fp = (fingerprint!(ki.hash) as $fpty) ^ match ki.index {
+                let fp = ($fingerprint(ki.hash) as $fpty) ^ match ki.index {
                     h if h == h0 => B[h1] ^ B[h2],
                     h if h == h1 => B[h0] ^ B[h2],
                     h if h == h2 => B[h0] ^ B[h1],

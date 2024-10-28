@@ -1,6 +1,6 @@
 //! Implements BinaryFuse8 filters.
 
-use crate::{bfuse_contains_impl, bfuse_from_impl, Filter};
+use crate::{bfuse_contains_impl, bfuse_from_impl, prelude::fingerprint, Filter};
 use alloc::{boxed::Box, vec::Vec};
 use core::convert::TryFrom;
 

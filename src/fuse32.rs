@@ -2,7 +2,7 @@
 
 #![allow(deprecated)] // Fuse32 filters are deprecated, but we need to implement them.
 
-use crate::{fuse_contains_impl, fuse_from_impl, Filter};
+use crate::{fuse_contains_impl, fuse_from_impl, prelude::fingerprint, Filter};
 use alloc::{boxed::Box, vec::Vec};
 use core::convert::TryFrom;
 

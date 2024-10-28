@@ -37,13 +37,11 @@ pub const fn mix(key: u64, seed: u64) -> u64 {
 }
 
 /// Computes a fingerprint.
-#[doc(hidden)]
-#[macro_export]
-macro_rules! fingerprint(
-    ($hash:expr) => {
-        $hash ^ ($hash >> 32)
-    };
-);
+pub fn fingerprint<T: Copy + core::ops::Shr<u8, Output = T> + core::ops::BitXor<Output = T>>(
+    hash: T,
+) -> T {
+    hash ^ (hash >> 32)
+}
 
 /// Rotate left
 #[doc(hidden)]

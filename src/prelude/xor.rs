@@ -31,7 +31,7 @@ macro_rules! xor_h(
 #[doc(hidden)]
 #[macro_export]
 macro_rules! xor_contains_impl(
-    ($key:expr, $self:expr, fingerprint $fpty:ty) => {
+    ($key:expr, $self:expr, $fingerprint:ident $fpty:ty) => {
         {
             use $crate::prelude::HashSet;
 
@@ -39,7 +39,7 @@ macro_rules! xor_contains_impl(
                 hash,
                 hset: [h0, h1, h2],
             } = HashSet::xor_from($key, $self.block_length, $self.seed);
-            let fp = $crate::fingerprint!(hash) as $fpty;
+            let fp = $fingerprint(hash) as $fpty;
 
             fp == $self.fingerprints[h0]
                 ^ $self.fingerprints[(h1 + $self.block_length)]
@@ -52,10 +52,9 @@ macro_rules! xor_contains_impl(
 #[doc(hidden)]
 #[macro_export]
 macro_rules! xor_from_impl(
-    ($keys:ident fingerprint $fpty:ty) => {
+    ($keys:ident $fingerprint:ident  $fpty:ty) => {
         {
             use $crate::{
-                fingerprint,
                 xor_h,
                 make_block,
                 prelude::{HashSet, HSet, KeyIndex},
@@ -164,7 +163,7 @@ macro_rules! xor_from_impl(
             #[allow(non_snake_case)]
             let mut B: Box<[$fpty]> = make_block!(with capacity sets);
             for ki in stack.iter().rev() {
-                B[ki.index] = fingerprint!(ki.hash) as $fpty
+                B[ki.index] = $fingerprint(ki.hash) as $fpty
                     ^ B[xor_h!(index block 0, of length block_length, using ki.hash)]
                     ^ B[(xor_h!(index block 1, of length block_length, using ki.hash) + block_length)]
                     ^ B[(xor_h!(index block 2, of length block_length, using ki.hash) + 2 * block_length)];

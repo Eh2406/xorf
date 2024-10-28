@@ -2,7 +2,7 @@
 //!
 //! [Xor Filters: Faster and Smaller Than Bloom and Cuckoo Filters]: https://arxiv.org/abs/1912.08258
 
-use crate::{xor_contains_impl, xor_from_impl, Filter};
+use crate::{prelude::fingerprint, xor_contains_impl, xor_from_impl, Filter};
 use alloc::{boxed::Box, vec::Vec};
 
 #[cfg(feature = "serde")]

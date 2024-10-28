@@ -57,11 +57,10 @@ pub const fn mod3(x: u8) -> u8 {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! bfuse_from_impl(
-    ($keys:ident fingerprint $fpty:ty, max iter $max_iter:expr) => {
+    ($keys:ident $fingerprint:ident  $fpty:ty, max iter $max_iter:expr) => {
         {
             use libm::round;
             use $crate::{
-                fingerprint,
                 make_block,
                 make_fp_block,
                 prelude::{
@@ -250,7 +249,7 @@ macro_rules! bfuse_from_impl(
             let size = ultimate_size;
             for i in (0..size).rev() {
                 let hash = reverse_order[i];
-                let xor2 = (fingerprint!(hash) as $fpty);
+                let xor2 = ($fingerprint(hash) as $fpty);
                 let (index1, index2, index3) = hash_of_hash(hash, segment_length, segment_length_mask, segment_count_length);
                 let found = reverse_h[i] as usize;
 		            h012[0] = index1;
@@ -279,17 +278,16 @@ macro_rules! bfuse_from_impl(
 #[doc(hidden)]
 #[macro_export]
 macro_rules! bfuse_contains_impl(
-    ($key:expr, $self:expr, fingerprint $fpty:ty) => {
+    ($key:expr, $self:expr, $fingerprint:ident $fpty:ty) => {
         {
             use $crate::{
-                fingerprint,
                 prelude::{
                     mix,
                     bfuse::hash_of_hash
                 },
             };
             let hash = mix($key, $self.seed);
-            let mut f = fingerprint!(hash) as $fpty;
+            let mut f = $fingerprint(hash) as $fpty;
             let (h0, h1, h2) = hash_of_hash(hash, $self.segment_length, $self.segment_length_mask, $self.segment_count_length);
             f ^= $self.fingerprints[h0 as usize]
                ^ $self.fingerprints[h1 as usize]
